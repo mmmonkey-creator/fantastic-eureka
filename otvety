@@ -1,0 +1,109 @@
+При решении данного тестирования был использовать язык Python.
+Вопрос №1
+На языке Python или C++ написать алгоритм (функцию) определения четности целого числа, который будет аналогичен нижеприведенному по функциональности, но отличен по своей сути. Объяснить плюсы и минусы обеих реализаций. 
+
+Пример: 
+
+def isEven(value):
+
+      return value % 2 == 0
+Решение:
+def isEven(value):
+    return value // 2 * 2 == value #Мы делим число на 2, затем умножаем результат обратно на 2 и сравниваем с исходным числом. Если результат совпадает с исходным числом, то число четное, иначе оно нечетное.
+
+Расмотрим плюсы и минусы первого метода:
+Плюсы:
+1)Данный код легкочитаем, короткий, интуитивно понятный. 
+2)Этот метод работает для всех целых чисел, включая отрицательные.
+Минусы: Производительность. Операция остатка от деления может быть немного медленнее по сравнению с другими методами, особенно для больших чисел.
+
+Реализация с использованием второго метода:
+Плюсы: 1) Код простой и интуитивно понятный,  использует только базовые арифметические операции. Метод, как и предыдцщий, работает для всех целых чисел, включая отрицательные.
+2) Код с // более производителен, чем код с %.
+
+Минусы: 1) код более длинный и менее читаемый для человека, не знакомого с подобными операциями.
+
+
+Вопрос №2
+
+1) Реализация с использованием списка и индексов, но без явного управления счетчиком элементов.
+Плюсы:  Простой код без счетчика, более производителен, чем со счетчиком.
+Минусы:  Возможны ошибки при управлении индексами без явного счетчика.
+class CircularBufferListNoCount:
+    def __init__(self, size):
+        self.size = size
+        self.buffer = [None] * size
+        self.head = 0
+        self.tail = 0
+
+    def is_empty(self):
+        return self.head == self.tail
+
+    def is_full(self):
+        return (self.tail + 1) % self.size == self.head
+
+    def write(self, data):
+        if self.is_full():
+            raise BufferError("Buffer is full")
+        self.buffer[self.tail] = data
+        self.tail = (self.tail + 1) % self.size
+        if self.tail == self.head:
+            self.head = (self.head + 1) % self.size
+
+    def read(self):
+        if self.is_empty():
+            raise BufferError("Buffer is empty")
+        data = self.buffer[self.head]
+        self.buffer[self.head] = None
+        self.head = (self.head + 1) % self.size
+        return data
+
+    def __repr__(self):
+        return f"CircularBufferListNoCount(size={self.size}, buffer={self.buffer}, head={self.head}, tail={self.tail})"
+2) Реализация с использованием двух отдельных списков для хранения данных и индексов.
+Плюсы: Простота и читаемость.
+Минусы: Может быть менее эффективным по сравнению с другими методами из-за использования двух списков.
+class CircularBufferTwoLists:
+    def __init__(self, size):
+        self.size = size
+        self.buffer = [None] * size
+        self.indices = []
+
+    def is_empty(self):
+        return len(self.indices) == 0
+
+    def is_full(self):
+        return len(self.indices) == self.size
+
+    def write(self, data):
+        if self.is_full():
+            raise BufferError("Buffer is full")
+        index = self.head if self.is_empty() else (self.head + len(self.indices)) % self.size
+        self.buffer[index] = data
+        self.indices.append(index)
+
+    def read(self):
+        if self.is_empty():
+            raise BufferError("Buffer is empty")
+        index = self.indices.pop(0)
+        data = self.buffer[index]
+        self.buffer[index] = None
+        return data
+
+    @property
+    def head(self):
+        return self.indices[0] if self.indices else 0
+
+    def __repr__(self):
+        return f"CircularBufferTwoLists(size={self.size}, buffer={self.buffer}, indices={self.indices})"
+
+Вопрос №3
+Для сортировки массива чисел в Python наиболее эффективным алгоритмом является встроенная функция sorted() или метод sort() списка. 
+def sort_array(a):
+    return sorted(a)
+
+# Пример использования
+a = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
+sorted_a = sort_array(a)
+print(sorted_a)
+Timsort использует комбинацию сортировки слиянием и вставками, что делает его очень эффективным для реальных данных, которые часто бывают частично отсортированными. Встроенные функции sorted() и метод sort() списка легко использовать и не требуют дополнительной настройки.
